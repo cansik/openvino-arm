@@ -34,6 +34,7 @@ popd || exit
 # python packages
 pip install wheel
 pip install pybind11 cython scons pyyaml clang==9.0
+pip install --upgrade setuptools
 
 # build
 mkdir $build_dir
@@ -44,6 +45,7 @@ pushd $build_dir || exit
 
 cmake -G Ninja \
       -DCMAKE_BUILD_TYPE=Release \
+      -DBUILD_SHARED_LIBS=ON \
       -DENABLE_BEH_TESTS=OFF \
       -DENABLE_CLDNN=OFF \
       -DENABLE_FUNCTIONAL_TESTS=OFF \
@@ -66,6 +68,6 @@ cmake --build . --
 
 # delocate
 pip install delocate
-delocate-wheel -v ./*.whl
+delocate-wheel -v ./wheels/*.whl
 
 popd || exit
