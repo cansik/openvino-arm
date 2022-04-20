@@ -60,7 +60,8 @@ if test -f "$pyenv_config"; then
 fi
 
 python_root="$(readlink -f $python_root)"
-python_lib="$python_root/lib"
+python_lib_path="$python_root/lib"
+python_lib="$python_lib_path/$(ls "$python_lib_path" | grep libpython)"
 
 echo "Python Executable: $python_executable"
 echo "Python Lib: $python_lib"
@@ -81,11 +82,9 @@ cmake -G Ninja \
       -DTHREADING=SEQ \
       -DIE_EXTRA_MODULES="$root_dir/$openvino_contrib_dir/modules/arm_plugin" \
       -DARM_COMPUTE_SCONS_JOBS=4 \
-      -DPYTHON_EXECUTABLE="/Users/cansik/.pyenv/versions/3.9.11/lib/libpython3.9.a" \
+      -DPYTHON_EXECUTABLE="$python_executable" \
       -DPYTHON_LIBRARY="$python_lib" \
       "$root_dir/$openvino_dir"
-
-# "$python_executable" \
 
 cmake --build . --
 # ninja install
