@@ -4,3 +4,4 @@ openvino_contrib
 openvino
 ie_build
 .DS_Store
+dist

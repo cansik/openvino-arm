@@ -1,9 +1,7 @@
 #!/bin/bash
 
 # dependencies
-# brew install ninja
-# brew install wget
-# brew install git-lfs
+# brew install ninja wget git-lfs
 
 ov_version_tag="2022.1.0"
 openvino_dir="openvino"
@@ -23,6 +21,7 @@ git clone --recurse-submodules --shallow-submodules --depth 1 --branch $ov_versi
 git clone --recurse-submodules --shallow-submodules --depth 1 --branch $ov_contrib_version_tag https://github.com/openvinotoolkit/openvino_contrib.git $openvino_contrib_dir
 
 root_dir=$(pwd)
+dist_dir="$root_dir/dist"
 
 # acl patch
 pushd "$openvino_contrib_dir/modules/arm_plugin/thirdparty/ComputeLibrary" || exit
@@ -67,7 +66,10 @@ cmake --build . --
 # ninja install
 
 # delocate
-pip install delocate
-delocate-wheel -v ./wheels/*.whl
+# pip install delocate
+# delocate-wheel -v ./wheels/*.whl
+
+mkdir -p "$dist_dir"
+cp -a ./wheels/*.whl "$dist_dir"
 
 popd || exit
