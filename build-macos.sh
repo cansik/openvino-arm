@@ -94,27 +94,29 @@ cmake -G Ninja \
       "$root_dir/$openvino_dir"
 
 cmake --build . --
-ninja install
+
+# ninja install does not work correctly
+# ninja install
 
 # delocate
 # pip install delocate
 # delocate-wheel -v ./wheels/*.whl
 
 # fix rpath in infernece engine and constants
-#pushd ./wheels || exit
-#wheel_name="$(echo "$WHEEL_PACKAGE_NAME" | awk '{gsub("-","_"); print}')"
-#openvino_wheel="$(ls | grep "$wheel_name")"
-#wheel unpack "$openvino_wheel"
-#wheel_dir_name="$(ls -d */ | grep $wheel_name)"
-#
-#pushd "$wheel_dir_name/openvino/inference_engine" || exit
-#install_name_tool -change @rpath/libopenvino.dylib  @loader_path/../libs/libopenvino.dylib ie_api.so
-#install_name_tool -change @rpath/libopenvino.dylib  @loader_path/../libs/libopenvino.dylib constants.so
-#popd || exit
-#
-#wheel pack "$wheel_dir_name"
-#rm -rf "$wheel_dir_name"
-#popd || exit
+pushd ./wheels || exit
+wheel_name="$(echo "$WHEEL_PACKAGE_NAME" | awk '{gsub("-","_"); print}')"
+openvino_wheel="$(ls | grep "$wheel_name")"
+wheel unpack "$openvino_wheel"
+wheel_dir_name="$(ls -d ./*/ | grep $wheel_name)"
+
+pushd "$wheel_dir_name/openvino/inference_engine" || exit
+install_name_tool -change @rpath/libopenvino.dylib  @loader_path/../libs/libopenvino.dylib ie_api.so
+install_name_tool -change @rpath/libopenvino.dylib  @loader_path/../libs/libopenvino.dylib constants.so
+popd || exit
+
+wheel pack "$wheel_dir_name"
+rm -rf "$wheel_dir_name"
+popd || exit
 
 mkdir -p "$dist_dir"
 cp -a ./wheels/*.whl "$dist_dir"
