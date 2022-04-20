@@ -55,8 +55,14 @@ pyenv_config="$python_root/pyvenv.cfg"
 if test -f "$pyenv_config"; then
   echo "pyenv detected"
   pyenv_home_line="$(head -1 "$pyenv_config")"
-  pyenv_home="$(echo "$pyenv_home_line" | awk -F' = ' '{print $2}')/.."
-  python_root="$pyenv_home"
+  pyenv_root_bin_dir="$(echo "$pyenv_home_line" | awk -F' = ' '{print $2}')"
+  pyenv_root_executable="$pyenv_root_bin_dir/$(ls "$pyenv_root_bin_dir" | grep "^python3*$")"
+
+  # lookup link
+  pyenv_root_executable="$(readlink -f $pyenv_root_executable)"
+  pyenv_root_bin_dir=$(dirname "$pyenv_root_executable")
+
+  python_root="$pyenv_root_bin_dir/.."
 fi
 
 python_root="$(readlink -f $python_root)"
@@ -84,18 +90,31 @@ cmake -G Ninja \
       -DARM_COMPUTE_SCONS_JOBS=4 \
       -DPYTHON_EXECUTABLE="$python_executable" \
       -DPYTHON_LIBRARY="$python_lib" \
+      -DCMAKE_OSX_DEPLOYMENT_TARGET=11 \
       "$root_dir/$openvino_dir"
 
 cmake --build . --
-# ninja install
+ninja install
 
 # delocate
 # pip install delocate
 # delocate-wheel -v ./wheels/*.whl
 
-# todo: fix rpath
-# install_name_tool -change @rpath/libopenvino.dylib  @loader_path/../libs/libopenvino.dylib ie_api.so
-# install_name_tool -change @rpath/libopenvino.dylib  @loader_path/../libs/libopenvino.dylib constants.so
+# fix rpath in infernece engine and constants
+#pushd ./wheels || exit
+#wheel_name="$(echo "$WHEEL_PACKAGE_NAME" | awk '{gsub("-","_"); print}')"
+#openvino_wheel="$(ls | grep "$wheel_name")"
+#wheel unpack "$openvino_wheel"
+#wheel_dir_name="$(ls -d */ | grep $wheel_name)"
+#
+#pushd "$wheel_dir_name/openvino/inference_engine" || exit
+#install_name_tool -change @rpath/libopenvino.dylib  @loader_path/../libs/libopenvino.dylib ie_api.so
+#install_name_tool -change @rpath/libopenvino.dylib  @loader_path/../libs/libopenvino.dylib constants.so
+#popd || exit
+#
+#wheel pack "$wheel_dir_name"
+#rm -rf "$wheel_dir_name"
+#popd || exit
 
 mkdir -p "$dist_dir"
 cp -a ./wheels/*.whl "$dist_dir"
