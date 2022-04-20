@@ -8,6 +8,13 @@ To install the prebuilt packages, use the following command. The package is call
 pip install openvino-arm --find-links https://github.com/cansik/openvino-arm/releases/tag/2022.1.0
 ```
 
+### Requirements.txt
+To use this library version in a `requirements.txt` it is recommended to use the following structure.
+
+```
+openvino-arm; platform_system == "Darwin" and platform.machine == 'arm64'
+```
+
 ## Build
 To build the libraries yourself, please first install the following dependencies and run the build script.
 
