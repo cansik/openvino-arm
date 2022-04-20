@@ -11,6 +11,10 @@ openvino_contrib_dir="openvino_contrib"
 
 build_dir="ie_build"
 
+# set wheel parameter
+export WHEEL_PACKAGE_NAME="openvino-arm"
+export WHEEL_URL="https://github.com/cansik/openvino-arm"
+
 # cleanup
 rm -rf $build_dir
 rm -rf $openvino_dir
@@ -28,6 +32,11 @@ pushd "$openvino_contrib_dir/modules/arm_plugin/thirdparty/ComputeLibrary" || ex
 wget "https://review.mlplatform.org/changes/ml%2FComputeLibrary~6706/revisions/4/patch?zip" -O patch.zip
 unzip patch.zip
 git apply 48f2615.diff
+popd || exit
+
+# arm64 patch
+pushd "$openvino_dir" || exit
+git apply "$root_dir/arm64-11542.diff"
 popd || exit
 
 # python packages

@@ -1,0 +1,22 @@
+From 4487364a3f3268120c5fa18e5cdf94338c77334f Mon Sep 17 00:00:00 2001
+From: Florian Bruggisser <github@broox.ch>
+Date: Wed, 20 Apr 2022 10:58:26 +0200
+Subject: [PATCH 1/2] Added arm64 architecture condition
+
+---
+ src/bindings/python/wheel/setup.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/bindings/python/wheel/setup.py b/src/bindings/python/wheel/setup.py
+index 5b070c269b7e..c6f5c0455f41 100644
+--- a/src/bindings/python/wheel/setup.py
++++ b/src/bindings/python/wheel/setup.py
+@@ -36,7 +36,7 @@
+     ARCH = 'ia32'
+ elif machine == 'arm':
+     ARCH = 'arm'
+-elif machine == 'aarch64':
++elif machine == 'aarch64' or machine == 'arm64':
+     ARCH = 'arm64'
+ 
+ # The following variables can be defined in environment or .env file
