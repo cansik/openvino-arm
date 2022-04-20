@@ -95,8 +95,10 @@ cmake -G Ninja \
 
 cmake --build . --
 
-# ninja install does not work correctly
+# warning: ninja install does not work correctly
 # ninja install
+
+# read -p "Press enter to continue"
 
 # delocate
 # pip install delocate
