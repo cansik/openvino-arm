@@ -48,8 +48,22 @@ pip install --upgrade setuptools
 mkdir $build_dir
 pushd $build_dir || exit
 
-# find /usr/ -name 'libpython*m.dylib'
-# find /usr/ -type d -name python3.7m
+python_executable="$(which python)"
+python_root="$(dirname "$python_executable")/.."
+
+pyenv_config="$python_root/pyvenv.cfg"
+if test -f "$pyenv_config"; then
+  echo "pyenv detected"
+  pyenv_home_line="$(head -1 "$pyenv_config")"
+  pyenv_home="$(echo "$pyenv_home_line" | awk -F' = ' '{print $2}')/.."
+  python_root="$pyenv_home"
+fi
+
+python_root="$(readlink -f $python_root)"
+python_lib="$python_root/lib"
+
+echo "Python Executable: $python_executable"
+echo "Python Lib: $python_lib"
 
 cmake -G Ninja \
       -DCMAKE_BUILD_TYPE=Release \
@@ -64,12 +78,14 @@ cmake -G Ninja \
       -DENABLE_WHEEL=ON \
       -DENABLE_INTEL_MYRIAD=OFF \
       -DCMAKE_INSTALL_PREFIX="$root_dir/$build_dir" \
-      -DPYTHON_EXECUTABLE="$(which python)" \
       -DTHREADING=SEQ \
       -DIE_EXTRA_MODULES="$root_dir/$openvino_contrib_dir/modules/arm_plugin" \
       -DARM_COMPUTE_SCONS_JOBS=4 \
-      -DPYTHON_LIBRARY=/Library/Frameworks/Python.framework/Versions/Current/lib \
+      -DPYTHON_EXECUTABLE="/Users/cansik/.pyenv/versions/3.9.11/lib/libpython3.9.a" \
+      -DPYTHON_LIBRARY="$python_lib" \
       "$root_dir/$openvino_dir"
+
+# "$python_executable" \
 
 cmake --build . --
 # ninja install
