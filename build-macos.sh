@@ -93,6 +93,10 @@ cmake --build . --
 # pip install delocate
 # delocate-wheel -v ./wheels/*.whl
 
+# todo: fix rpath
+# install_name_tool -change @rpath/libopenvino.dylib  @loader_path/../libs/libopenvino.dylib ie_api.so
+# install_name_tool -change @rpath/libopenvino.dylib  @loader_path/../libs/libopenvino.dylib constants.so
+
 mkdir -p "$dist_dir"
 cp -a ./wheels/*.whl "$dist_dir"
 
