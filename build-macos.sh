@@ -136,6 +136,11 @@ popd || exit
 
 wheel pack "$wheel_dir_name"
 rm -rf "$wheel_dir_name"
+
+# rename wheel with correct tag and abi
+python_tag="$(python -c 'import sys; i=sys.version_info; print(f"cp{i.major}{i.minor}")')"
+for file in *.whl ; do mv "$file" "${file//py3-none-macosx_12_0/$python_tag-$python_tag-macosx_11_0}" ; done
+
 popd || exit
 
 mkdir -p "$dist_dir"
