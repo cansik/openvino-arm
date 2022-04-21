@@ -52,6 +52,7 @@ build_dir="ie_build"
 # set wheel parameter
 export WHEEL_PACKAGE_NAME="openvino-arm"
 export WHEEL_URL="https://github.com/cansik/openvino-arm"
+export WHEEL_BUILD="001"
 
 # cleanup
 rm -rf $build_dir
@@ -72,9 +73,11 @@ unzip patch.zip
 git apply 48f2615.diff
 popd || exit
 
-# arm64 patch
 pushd "$openvino_dir" || exit
+# arm64 patch
 git apply "$root_dir/arm64-11542.diff"
+# remove openvino numpy upper dependency
+git apply "$root_dir/numpydep.patch"
 popd || exit
 
 # python packages

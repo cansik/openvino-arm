@@ -16,14 +16,7 @@ openvino-arm; platform_system == "Darwin" and platform.machine == 'arm64'
 ```
 
 ### Numpy Dependency
-OpenVINO still depends on numpy version `<1.20` which has no prebuilt Apple silicon binaries ready. Pip tries to download and build it from source, which can fail on an Apple silicon Mac.
-
-A fix for now is to install a newer version of numpy and ignore the dependencies for openvino.
-
-```
-pip install numpy
-pip install --no-deps openvino-arm
-```
+OpenVINO still depends on numpy version `<1.20` which has no prebuilt Apple silicon binaries ready. Pip tries to download and build it from source, which can fail on an Apple silicon Mac. Because of that the dependency condition has been excluded from this build. OpenVINO runs with deprecation warnings together with numpy `1.22`.
 
 ## Build
 To build the libraries yourself, please first install the following dependencies and run the build script.

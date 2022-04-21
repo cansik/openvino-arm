@@ -1,0 +1,9 @@
+diff --git a/src/bindings/python/requirements.txt b/src/bindings/python/requirements.txt
+index 9255207..659894e 100644
+--- a/src/bindings/python/requirements.txt
++++ b/src/bindings/python/requirements.txt
+@@ -1 +1 @@
+-numpy>=1.16.6,<1.20
+\ No newline at end of file
++numpy>=1.16.6
+\ No newline at end of file
