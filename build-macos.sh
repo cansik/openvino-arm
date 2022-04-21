@@ -45,7 +45,7 @@ openvino_dir="openvino"
 ov_contrib_version_tag="2022.1"
 openvino_contrib_dir="openvino_contrib"
 
-macos_deployment_target=11
+macos_deployment_target=12
 
 build_dir="ie_build"
 
