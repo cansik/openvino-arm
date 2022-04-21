@@ -45,6 +45,8 @@ openvino_dir="openvino"
 ov_contrib_version_tag="2022.1"
 openvino_contrib_dir="openvino_contrib"
 
+macos_deployment_target=11
+
 build_dir="ie_build"
 
 # set wheel parameter
@@ -108,6 +110,7 @@ cmake -G Ninja \
       -DARM_COMPUTE_SCONS_JOBS=4 \
       -DPYTHON_EXECUTABLE="$python_executable" \
       -DPYTHON_LIBRARY="$python_lib" \
+      -DCMAKE_OSX_DEPLOYMENT_TARGET=$macos_deployment_target \
       "$root_dir/$openvino_dir"
 
 cmake --build . --
@@ -121,7 +124,7 @@ cmake --build . --
 # pip install delocate
 # delocate-wheel -v ./wheels/*.whl
 
-# fix rpath in infernece engine and constants
+# fix rpath in inference engine and constants
 pushd ./wheels || exit
 wheel_name="$(echo "$WHEEL_PACKAGE_NAME" | awk '{gsub("-","_"); print}')"
 openvino_wheel="$(ls | grep "$wheel_name")"
@@ -138,7 +141,7 @@ rm -rf "$wheel_dir_name"
 
 # rename wheel with correct tag and abi
 python_tag="$(python -c 'import sys; i=sys.version_info; print(f"cp{i.major}{i.minor}")')"
-for file in *.whl ; do mv "$file" "${file//py3-none/$python_tag-$python_tag}" ; done
+for file in *.whl ; do mv "$file" "${file//py3-none-macosx_12_0/$python_tag-$python_tag-macosx_${macos_deployment_target}_0}" ; done
 
 popd || exit
 
