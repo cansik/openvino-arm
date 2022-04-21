@@ -3,6 +3,42 @@
 # dependencies
 # brew install ninja wget git-lfs
 
+function find_python() {
+  python_executable="$(which python)"
+  python_root="$(dirname "$python_executable")/.."
+
+  pyenv_config="$python_root/pyvenv.cfg"
+  if test -f "$pyenv_config"; then
+    echo "pyenv detected"
+    pyenv_home_line="$(head -1 "$pyenv_config")"
+    pyenv_root_bin_dir="$(echo "$pyenv_home_line" | awk -F' = ' '{print $2}')"
+    pyenv_root_executables="$(ls "$pyenv_root_bin_dir" | grep "^python.*$")"
+    pyenv_root_executable_list=${pyenv_root_executables%$'\n'*}
+
+    while IFS= read -r line; do
+      pyenv_root_executable="$pyenv_root_bin_dir/$line"
+      echo "checking python executable $line..."
+      result="$("$pyenv_root_executable" --version)"
+      if [ "$result" = "$(python --version)" ]; then
+        echo "python executable found: $pyenv_root_executable"
+        break
+      fi
+    done <<< "$pyenv_root_executable_list"
+
+    # lookup link
+    pyenv_root_executable="$(readlink -f $pyenv_root_executable)"
+    pyenv_root_bin_dir=$(dirname "$pyenv_root_executable")
+
+    python_root="$pyenv_root_bin_dir/.."
+  fi
+
+  export python_root="$(readlink -f $python_root)"
+  python_lib_path="$python_root/lib"
+  export python_lib="$python_lib_path/$(ls "$python_lib_path" | grep libpython)"
+}
+
+echo "building for $(python --version)"
+
 ov_version_tag="2022.1.0"
 openvino_dir="openvino"
 
@@ -44,34 +80,16 @@ pip install wheel
 pip install pybind11 cython scons pyyaml clang==9.0
 pip install --upgrade setuptools
 
-# build
+# prepare build
 mkdir $build_dir
 pushd $build_dir || exit
 
-python_executable="$(which python)"
-python_root="$(dirname "$python_executable")/.."
-
-pyenv_config="$python_root/pyvenv.cfg"
-if test -f "$pyenv_config"; then
-  echo "pyenv detected"
-  pyenv_home_line="$(head -1 "$pyenv_config")"
-  pyenv_root_bin_dir="$(echo "$pyenv_home_line" | awk -F' = ' '{print $2}')"
-  pyenv_root_executable="$pyenv_root_bin_dir/$(ls "$pyenv_root_bin_dir" | grep "^python3*$")"
-
-  # lookup link
-  pyenv_root_executable="$(readlink -f $pyenv_root_executable)"
-  pyenv_root_bin_dir=$(dirname "$pyenv_root_executable")
-
-  python_root="$pyenv_root_bin_dir/.."
-fi
-
-python_root="$(readlink -f $python_root)"
-python_lib_path="$python_root/lib"
-python_lib="$python_lib_path/$(ls "$python_lib_path" | grep libpython)"
-
+# find python
+find_python
 echo "Python Executable: $python_executable"
 echo "Python Lib: $python_lib"
 
+# prepare cmake
 cmake -G Ninja \
       -DCMAKE_BUILD_TYPE=Release \
       -DBUILD_SHARED_LIBS=ON \
