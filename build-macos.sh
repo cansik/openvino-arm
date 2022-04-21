@@ -108,7 +108,6 @@ cmake -G Ninja \
       -DARM_COMPUTE_SCONS_JOBS=4 \
       -DPYTHON_EXECUTABLE="$python_executable" \
       -DPYTHON_LIBRARY="$python_lib" \
-      -DCMAKE_OSX_DEPLOYMENT_TARGET=11 \
       "$root_dir/$openvino_dir"
 
 cmake --build . --
@@ -139,7 +138,7 @@ rm -rf "$wheel_dir_name"
 
 # rename wheel with correct tag and abi
 python_tag="$(python -c 'import sys; i=sys.version_info; print(f"cp{i.major}{i.minor}")')"
-for file in *.whl ; do mv "$file" "${file//py3-none-macosx_12_0/$python_tag-$python_tag-macosx_11_0}" ; done
+for file in *.whl ; do mv "$file" "${file//py3-none/$python_tag-$python_tag}" ; done
 
 popd || exit
 
