@@ -15,6 +15,25 @@ To use this library version in a `requirements.txt` it is recommended to use the
 openvino-arm; platform_system == "Darwin" and platform.machine == 'arm64'
 ```
 
+### Numpy Dependency
+OpenVINO still depends on numpy version `<1.20` which has no prebuilt Apple silicon binaries ready. Pip tries to download and build it from source, which can fail on an Apple silicon Mac. To let it build correctly install `openblas` and set the specific environment variables.
+
+```
+brew install openblas
+
+export OPENBLAS=$(brew --prefix openblas)
+export CFLAGS="-falign-functions=8 ${CFLAGS}"
+
+pip install openvino-arm
+```
+
+Another way which works fine too is to just ignore the dependencies and install a newer version of numpy.
+
+```
+pip install numpy
+pip install --no-deps openvino-arm
+```
+
 ## Build
 To build the libraries yourself, please first install the following dependencies and run the build script.
 
