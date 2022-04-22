@@ -1,11 +1,13 @@
 # [OpenVINO™ Toolkit](https://github.com/openvinotoolkit/openvino) - Prebuilt ARM CPU plugin
+[![PyPI](https://img.shields.io/pypi/v/openvino-arm)](https://pypi.org/project/openvino-arm/)
+
 Prebuilt [openvino](https://github.com/openvinotoolkit/openvino) python package with the [openvino arm cpu](https://github.com/openvinotoolkit/openvino_contrib/tree/master/modules/arm_plugin) extension for MacOS. Currently only MacOS `11` and `12` with `arm64` is supported.
 
 ## Install
-To install the prebuilt packages, use the following command. The package is called openvino-arm but is a drop-in-replacement for the openvino package.
+To install the prebuilt packages from [PyPi](https://pypi.org/project/openvino-arm/), use the following command. The package is called openvino-arm but is a drop-in-replacement for the openvino package.
 
 ```
-pip install openvino-arm --find-links https://github.com/cansik/openvino-arm/releases/tag/2022.1.0
+pip install openvino-arm
 ```
 
 ### Requirements.txt
