@@ -45,14 +45,15 @@ openvino_dir="openvino"
 ov_contrib_version_tag="2022.1"
 openvino_contrib_dir="openvino_contrib"
 
-macos_deployment_target=12
+macos_deployment_target=11
 
 build_dir="ie_build"
 
 # set wheel parameter
 export WHEEL_PACKAGE_NAME="openvino-arm"
 export WHEEL_URL="https://github.com/cansik/openvino-arm"
-export WHEEL_BUILD="001"
+export CUSTOM_WHEEL_VERSION="2022.1.0.1"
+export WHEEL_BUILD="000"
 
 # cleanup
 rm -rf $build_dir
@@ -75,9 +76,11 @@ popd || exit
 
 pushd "$openvino_dir" || exit
 # arm64 patch
-git apply "$root_dir/arm64-11542.diff"
+git apply "$root_dir/patches/arm64-11542.diff"
+# custom version patch
+git apply "$root_dir/patches/custom-version.diff"
 # remove openvino numpy upper dependency
-git apply "$root_dir/numpydep.patch"
+git apply "$root_dir/patches/numpydep.patch"
 popd || exit
 
 # python packages
@@ -137,6 +140,11 @@ wheel_dir_name="$(ls -d ./*/ | grep $wheel_name)"
 pushd "$wheel_dir_name/openvino/inference_engine" || exit
 install_name_tool -change @rpath/libopenvino.dylib  @loader_path/../libs/libopenvino.dylib ie_api.so
 install_name_tool -change @rpath/libopenvino.dylib  @loader_path/../libs/libopenvino.dylib constants.so
+popd || exit
+
+pushd "$wheel_dir_name/openvino" || exit
+cython_version="$(python -c 'import sys; i=sys.version_info; print(f"{i.major}{i.minor}")')"
+install_name_tool -change @rpath/libopenvino.dylib  @loader_path/libs/libopenvino.dylib "pyopenvino.cpython-$cython_version-darwin.so"
 popd || exit
 
 wheel pack "$wheel_dir_name"
