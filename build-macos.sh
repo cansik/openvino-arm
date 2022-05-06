@@ -99,6 +99,7 @@ echo "Python Lib: $python_lib"
 
 # prepare cmake
 cmake -G Ninja \
+      -DCMAKE_OSX_ARCHITECTURES="arm64" \
       -DCMAKE_BUILD_TYPE=Release \
       -DBUILD_SHARED_LIBS=ON \
       -DENABLE_BEH_TESTS=OFF \
@@ -151,8 +152,8 @@ wheel pack "$wheel_dir_name"
 rm -rf "$wheel_dir_name"
 
 # rename wheel with correct tag and abi
-python_tag="$(python -c 'import sys; i=sys.version_info; print(f"cp{i.major}{i.minor}")')"
-for file in *.whl ; do mv "$file" "${file//py3-none-macosx_12_0/$python_tag-$python_tag-macosx_${macos_deployment_target}_0}" ; done
+# python_tag="$(python -c 'import sys; i=sys.version_info; print(f"cp{i.major}{i.minor}")')"
+# for file in *.whl ; do mv "$file" "${file//py3-none-macosx_12_0/$python_tag-$python_tag-macosx_${macos_deployment_target}_0}" ; done
 
 popd || exit
 
