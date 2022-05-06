@@ -58,4 +58,4 @@ jobs:
           body: "Prebuilt openvino-arm wheel packages for MacOS version ${{ github.event.inputs.tag }}."
           overwrite: true
           file_glob: true
-          prerelease: ${{ github.event.inputs.prerelease }}
+          # prerelease: ${{ github.event.inputs.prerelease }}
