@@ -1,3 +1,10 @@
+# ⚠️ OpenVino now [officially supports](https://github.com/openvinotoolkit/openvino/issues/11554#issuecomment-1370994800) MacOS Apple Silicon!
+Please install openvino on MacOS arm64 with the following command:
+
+```
+pip install openvino
+```
+
 # [OpenVINO™ Toolkit](https://github.com/openvinotoolkit/openvino) - Prebuilt ARM CPU plugin
 [![PyPI](https://img.shields.io/pypi/v/openvino-arm)](https://pypi.org/project/openvino-arm/)
 
